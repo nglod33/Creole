@@ -1,19 +1,22 @@
 package CreoleModel;
 
-import CreoleModel.Protocols.Discord;
+import java.util.List;
 
 // A single contact to be used to message one contact on one specific messaging service
 public abstract class MessageProtocol {
+
     public enum ProtocolType {
         DISCORD,
         SIGNAL;
     }
 
-    private String userName;
-    private ProtocolType protocol;
+    private ProtocolType protocolType;
 
-    public MessageProtocol(String userName, ProtocolType ProtocolType){
-        this.userName = userName;
-        this.protocol = ProtocolType;
+    public ProtocolType getProtocolType() {
+        return protocolType;
     }
+
+    public abstract String sendMessage(String userName, Message message);
+
+    public abstract List<Message> getMessages();
 }

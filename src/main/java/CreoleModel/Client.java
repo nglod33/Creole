@@ -1,37 +1,23 @@
 package CreoleModel;
 
-import CreoleModel.Protocols.Discord;
-import CreoleModel.Protocols.Signal;
-
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 
 public class Client implements User {
 
     //
-    private ArrayList<Contact> Contacts = new ArrayList<>();
-    private ArrayList<MessageProtocol> Protocols = new ArrayList<>();
+    private HashMap<String, Contact> Contacts;
+    private HashMap<MessageProtocol.ProtocolType, MessageProtocol> ClientProtocols;
 
 
     // Getter for Contacts
-    public ArrayList<Contact> getContacts(){
+    public HashMap<String, Contact> getContacts(){
         return this.Contacts;
     }
 
     // Setter for Contacts
-    public void setContacts(ArrayList<Contact> Contacts){
+    public void setContacts(HashMap<String, Contact> Contacts){
         this.Contacts = Contacts;
-    }
-
-    // Getter for Protocols
-    public ArrayList<MessageProtocol> getProtocols(){
-        return this.Protocols;
-    }
-
-    // Setter for Protocols
-    public void setProtocols(ArrayList<MessageProtocol> Protocols){
-        this.Protocols = Protocols;
     }
 
     // TODO: Implement method for Contact class that chooses which protocol to send from
@@ -41,24 +27,16 @@ public class Client implements User {
     // Otherwise, the same method should be called with a contact in place of the username
     public String sendMessage(String userName, Message message, MessageProtocol.ProtocolType protocol){
 
-        MessageProtocol recipient;
-        switch (protocol){
-            case MessageProtocol.ProtocolType.DISCORD:
-                recipient = new Discord(userName, MessageProtocol.ProtocolType.DISCORD);
-            case MessageProtocol.ProtocolType.SIGNAL:
-                recipient = new Signal(userName, MessageProtocol.ProtocolType.SIGNAL);
-            default:
-                return ReturnEnums.MESSAGE_COULD_NOT_BE_SENT.message + ReturnEnums.UNKNOWN_PROTOCOL.message;
-        }
+        Contact newContact = new Contact(userName);
+        newContact.addUserName(userName, protocol);
+        this.Contacts.put(userName, newContact);
 
-        // TODO: Create contact with the given username, add created protocol to that contact, send the message
-
-        return "";
+        return sendMessage(this.Contacts.get(userName), message, protocol);
     }
 
     // Same as the above method, but sends it through a contact rather than creating a new one with a username
     public String sendMessage(Contact recipient, Message message, MessageProtocol.ProtocolType protocol){
-
+         return this.ClientProtocols.get(protocol).sendMessage(recipient.getUsername(protocol), message);
     }
 
     public static void main(String[] args) {
